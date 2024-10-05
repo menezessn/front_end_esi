@@ -37,7 +37,7 @@ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 
     const data = await response.json();
     localStorage.setItem('token', data.token); // Salva o token no localStorage
-    navigate('/home'); // Redireciona para a rota home após o login
+    navigate('/'); // Redireciona para a rota home após o login
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
     setError(error.message);

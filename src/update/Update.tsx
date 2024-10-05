@@ -43,7 +43,7 @@ const UpdateDemand: React.FC = () => {
 
         if (response.ok) {
             console.log('Demanda atualizada com sucesso!');
-            navigate('/home'); // Redireciona para a tela inicial após atualização
+            navigate('/'); // Redireciona para a tela inicial após atualização
         } else {
             console.error('Erro ao atualizar a demanda. ' + demand.id);
         }

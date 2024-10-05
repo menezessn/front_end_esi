@@ -1,10 +1,11 @@
 import {BrowserRouter as Router, Routes, Route} from "react-router-dom"
 import Login from './login/Login'
 import Register from './register/Register'
-import Home from "./home/Home"
-import UpdateDemand from "./update/Update"
+import HomePage from "./home/HomePage"
+import UpdatePage from "./update/UpdatePage"
 import PrivateRoute from "./routes_settings/PrivateRoute"
 import PublicRoute from "./routes_settings/PublicRoute"
+import CreateDemandPage from "./demand/CreateDemandPage"
 
 function App() {
 
@@ -32,10 +33,10 @@ function App() {
           />
 
           <Route
-            path="/home" 
+            path="/" 
             element={
               <PrivateRoute>
-                <Home/>
+                <HomePage/>
               </PrivateRoute>
             }
           />
@@ -44,7 +45,16 @@ function App() {
             path="/update" 
             element={
               <PrivateRoute>
-                <UpdateDemand/>
+                <UpdatePage/>
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/create" 
+            element={
+              <PrivateRoute>
+                <CreateDemandPage/>
               </PrivateRoute>
             }
           />
