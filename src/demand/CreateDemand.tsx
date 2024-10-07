@@ -7,6 +7,7 @@ import { jwtDecode } from "jwt-decode";
 
 interface DecodedToken {
     id: string;
+    email: string;
     iat: number;
     exp: number;
     }
@@ -42,13 +43,35 @@ const CreateDemand: React.FC = () => {
             }
 
             const decoded: DecodedToken = jwtDecode(token);
-            const clientID = decoded.id; // Simular a obtenção do ID do cliente do token
+            const clientID = decoded.id; 
+            const clientEmail = decoded.email
+
             const timestamp = dayjs().format('YYYYMMDD_HHmmss');
             const folderName = `${clientID}_${timestamp}`;
-            const filePaths = files.map(file => `${folderName}/${file.name}`);
+            //const filePaths = files.map(file => `${folderName}/${file.name}`);
 
             const formData = new FormData();
-            files.forEach(file => formData.append('documents', file));
+            formData.append("file_paths", folderName)
+            files.forEach(file => formData.append('files', file));
+            
+
+            // Enviando dados da demanda para a API
+            const responseFiles = await fetch('http://localhost:3333/upload', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}` // Adiciona o token no header
+                },
+                body: formData,
+            });
+
+            if (responseFiles.ok) {
+                console.log("Upload realizado")
+            } else {
+                const errorData = await responseFiles.json();
+                setErrorMessage(errorData.message || 'Erro ao fazer upload');
+            }
+
+            
             
             // Enviando dados da demanda para a API
             const response = await fetch('http://localhost:3333/create/demand', {
@@ -58,8 +81,8 @@ const CreateDemand: React.FC = () => {
                     'Authorization': `Bearer ${token}`, // Adiciona o token no header
                 },
                 body: JSON.stringify({
-                    aplicant: clientID, // ID do cliente retirado do token
-                    status: "demand_created",
+                    aplicant: clientEmail, // ID do cliente retirado do token
+                    status: "Criada",
                     file_paths: folderName,
                 }),
             });
@@ -79,7 +102,8 @@ const CreateDemand: React.FC = () => {
     const { getRootProps, getInputProps } = useDropzone({
         onDrop: handleDrop,
         accept: {
-            'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx']
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx'],
+            'application/msword': ['.doc'] 
         }
     });
 
