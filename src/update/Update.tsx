@@ -7,12 +7,30 @@ const UpdateDemand: React.FC = () => {
     const navigate = useNavigate();
     const { demand } = location.state || { demand: null };
 
+    const token = localStorage.getItem('token');
+    
+    // Função para extrair as informações do token
+    const parseToken = (token: string | null) => {
+        if (!token) return null;
+        try {
+            return JSON.parse(atob(token.split('.')[1])); // Decodifica o payload do JWT
+        } catch (error) {
+            console.error('Erro ao decodificar o token:', error);
+            return null;
+        }
+    };
+
+    const user = parseToken(token);
+    const isStudent = user?.userType === 'aluno'; // Verifica se o usuário é aluno
+    const isNotCoordinator = !(user?.userType === 'coordenador'); 
+    const isNotCoordinatorOrSecretary = !(user?.userType === 'coordenador' || user?.userType === 'secretaria'); 
+
+
     const [responsibleOpinion, setResponsibleOpinion] = useState<string>(demand?.responsible_opinion || '');
     const [status, setStatus] = useState<string>(demand?.status || '');
     const [reviewer, setReviewer] = useState<string>(demand?.reviewer || '');
-    const [files, setFiles] = useState<FileList | null>(null); // Para armazenar os arquivos selecionados
+    const [files, setFiles] = useState<FileList | null>(null);
 
-    // Função para fazer o download dos arquivos
     const handleDownload = async () => {
         const response = await fetch(`http://localhost:3333/download?file_paths=${demand.file_paths}`, {
             headers: {
@@ -32,14 +50,12 @@ const UpdateDemand: React.FC = () => {
         }
     };
 
-    // Função para lidar com o envio do formulário de upload de arquivos
     const handleFileUpload = async () => {
         if (!files) return;
-        
+
         const formData = new FormData();
         formData.append('file_paths', demand.file_paths);
 
-        // Adiciona todos os arquivos selecionados ao FormData
         Array.from(files).forEach((file) => {
             formData.append('files', file);
         });
@@ -76,7 +92,9 @@ const UpdateDemand: React.FC = () => {
         if (reviewer) {
             body.reviewer = reviewer;
         }
-        
+
+        body.aplicant = demand.aplicant
+
         const response = await fetch(`http://localhost:3333/update/demand`, {
             method: 'PUT',
             headers: {
@@ -104,9 +122,10 @@ const UpdateDemand: React.FC = () => {
                         <TextField
                             margin="normal"
                             fullWidth
-                            label="Responsável pela Opinião"
+                            label="Responsável pelo parecer"
                             value={responsibleOpinion}
                             onChange={(e) => setResponsibleOpinion(e.target.value)}
+                            disabled={isNotCoordinator} // Bloqueia o campo se o usuário for aluno
                         />
                         <TextField
                             margin="normal"
@@ -114,6 +133,7 @@ const UpdateDemand: React.FC = () => {
                             label="Revisor do parecer"
                             value={reviewer}
                             onChange={(e) => setReviewer(e.target.value)}
+                            disabled={isNotCoordinatorOrSecretary} // Bloqueia o campo se o usuário for aluno
                         />
                         <TextField
                             margin="normal"
@@ -123,6 +143,7 @@ const UpdateDemand: React.FC = () => {
                             label="Status"
                             value={status}
                             onChange={(e) => setStatus(e.target.value)}
+                            disabled={isStudent}
                         >
                             <MenuItem value="Criada">Criada</MenuItem>
                             <MenuItem value="Parecer solicitado">Parecer solicitado</MenuItem>
@@ -141,27 +162,28 @@ const UpdateDemand: React.FC = () => {
                             Baixar Arquivos
                         </Button>
 
-                        {/* Input para selecionar arquivos para upload */}
-                        <input
-                            type="file"
-                            multiple
-                            onChange={(e) => setFiles(e.target.files)}
-                            style={{ marginTop: '20px' }}
-                        />
-
-                        {/* Botão para fazer upload */}
-                        <Button
-                            variant="contained"
-                            fullWidth
-                            sx={{ mt: 2 }}
-                            onClick={handleFileUpload}
-                        >
-                            Enviar Arquivos
-                        </Button>
-
-                        <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
-                            Atualizar
-                        </Button>
+                        {/* Seletor de arquivos e botão de envio visíveis apenas se o usuário não for aluno */}
+                        {!isStudent && (
+                            <>
+                                <input
+                                    type="file"
+                                    multiple
+                                    onChange={(e) => setFiles(e.target.files)}
+                                    style={{ marginTop: '20px' }}
+                                />
+                                <Button
+                                    variant="contained"
+                                    fullWidth
+                                    sx={{ mt: 2 }}
+                                    onClick={handleFileUpload}
+                                >
+                                    Enviar Arquivos
+                                </Button>
+                                <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
+                                    Atualizar
+                                </Button>
+                            </>
+                        )}
                     </Box>
                 </Box>
             </Paper>

@@ -6,6 +6,7 @@ import UpdatePage from "./update/UpdatePage"
 import PrivateRoute from "./routes_settings/PrivateRoute"
 import PublicRoute from "./routes_settings/PublicRoute"
 import CreateDemandPage from "./demand/CreateDemandPage"
+import UserUpdatePage from "./user_update/UserUpdatePage"
 
 function App() {
 
@@ -55,6 +56,15 @@ function App() {
             element={
               <PrivateRoute>
                 <CreateDemandPage/>
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/account" 
+            element={
+              <PrivateRoute>
+                <UserUpdatePage/>
               </PrivateRoute>
             }
           />
