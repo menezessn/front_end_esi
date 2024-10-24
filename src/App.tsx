@@ -5,6 +5,7 @@ import HomePage from "./home/HomePage"
 import UpdatePage from "./update/UpdatePage"
 import PrivateRoute from "./routes_settings/PrivateRoute"
 import PublicRoute from "./routes_settings/PublicRoute"
+import PrivelegedRoute from "./routes_settings/PrivilegedRoute"
 import CreateDemandPage from "./demand/CreateDemandPage"
 import UserUpdatePage from "./user_update/UserUpdatePage"
 
@@ -27,9 +28,9 @@ function App() {
           <Route
             path="/register" 
             element={
-              <PublicRoute>
+              <PrivelegedRoute>
                 <Register/>
-              </PublicRoute>
+              </PrivelegedRoute>
             }
           />
 

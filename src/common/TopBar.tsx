@@ -13,16 +13,18 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
 import { Link, useNavigate } from "react-router-dom";
-import { jwtDecode } from "jwt-decode";
+import {jwtDecode} from "jwt-decode"; // Atualizado para uso correto do jwtDecode
 
 const pages = [
 { name: "Home", path: "/" },
 { name: "Nova demanda", path: "/create" },
 ];
+
 const settings = ["Conta", "Sair"];
 
 interface DecodedToken {
 name: string;
+userType: string;
 iat: number;
 exp: number;
 }
@@ -33,13 +35,15 @@ const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null)
 
 const navigate = useNavigate();
 
-// Obter o nome do usuário do token
+// Obter o nome e tipo de usuário do token
 const token = localStorage.getItem("token");
 let firstLetter = "U"; // Letra padrão caso não tenha token
+let userType = ""; // Tipo de usuário
 
 if (token) {
     const decoded: DecodedToken = jwtDecode(token);
     firstLetter = decoded.name.charAt(0).toUpperCase(); // Primeira letra do nome
+    userType = decoded.userType; // Tipo de usuário
 }
 
 const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -107,7 +111,7 @@ return (
             SGD
             </Typography>
         </Box>
-        
+
         <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
             <IconButton
             size="large"
@@ -138,7 +142,12 @@ return (
             }}
             >
             {pages.map((page) => (
-                <MenuItem key={page.name} onClick={handleCloseNavMenu} component={Link} to={page.path}>
+                <MenuItem
+                key={page.name}
+                onClick={handleCloseNavMenu}
+                component={Link}
+                to={page.path}
+                >
                 <Typography
                     textAlign="center"
                     sx={{
@@ -149,6 +158,14 @@ return (
                 </Typography>
                 </MenuItem>
             ))}
+            {/* Adiciona a opção Cadastrar Usuários, visível apenas se o userType for diferente de aluno */}
+            {userType !== "aluno" && (
+                <MenuItem onClick={handleCloseNavMenu} component={Link} to="/register">
+                <Typography textAlign="center" sx={{ color: "#000000" }}>
+                    Cadastrar Usuários
+                </Typography>
+                </MenuItem>
+            )}
             </Menu>
         </Box>
 
@@ -190,7 +207,7 @@ return (
             SGD
             </Typography>
         </Box>
-        
+
         <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
             {pages.map((page) => (
             <Button
@@ -210,6 +227,24 @@ return (
                 {page.name}
             </Button>
             ))}
+            {/* Adiciona a opção Cadastrar Usuários, visível apenas se o userType for diferente de aluno */}
+            {userType !== "aluno" && (
+            <Button
+                onClick={handleCloseNavMenu}
+                sx={{
+                my: 2,
+                color: "white",
+                display: "block",
+                "&:hover": {
+                    color: "#a69cad",
+                },
+                }}
+                component={Link}
+                to="/register"
+            >
+                Cadastrar Usuários
+            </Button>
+            )}
         </Box>
 
         <Box sx={{ flexGrow: 0 }}>

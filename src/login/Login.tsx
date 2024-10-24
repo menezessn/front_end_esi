@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { TextField, Button, Box, Typography, Container, CssBaseline, Paper, Link, Alert } from '@mui/material';
-import { Link as RouterLink, useNavigate, useLocation } from 'react-router-dom';
+import { TextField, Button, Box, Typography, Container, CssBaseline, Paper, Alert } from '@mui/material';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const Login: React.FC = () => {
 const [cpf, setCpf] = useState<string>(''); // Use CPF para o login
@@ -106,12 +106,6 @@ return (
             <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
             Entrar
             </Button>
-            <Typography variant="body2" sx={{ fontSize: '1.0rem' }}>
-            Ainda não tem uma conta?{' '}
-            <Link component={RouterLink} to="/register">
-                Registre-se
-            </Link>
-            </Typography>
         </Box>
         </Box>
     </Paper>

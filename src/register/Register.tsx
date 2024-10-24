@@ -38,7 +38,7 @@ const Register: React.FC = () => {
 
             if (response.ok) {
                 // Se o cadastro for bem-sucedido, redireciona para a tela de login com um parâmetro
-                navigate('/login', { state: { newUser: true } });
+                navigate('/');
             } else {
                 const errorData = await response.json();
                 setErrorMessage(errorData.message || 'Erro ao realizar cadastro');

@@ -150,6 +150,7 @@ const UpdateDemand: React.FC = () => {
                             <MenuItem value="Revisão solicitada">Revisão de parecer solicitado</MenuItem>
                             <MenuItem value="Pronto para a deliberação">Pronto para deliberação</MenuItem>
                             <MenuItem value="Deliberado">Deliberado</MenuItem>
+                            <MenuItem value="Cancelado">Cancelado</MenuItem>
                         </TextField>
 
                         {/* Botão para download */}
